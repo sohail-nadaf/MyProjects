@@ -14,10 +14,6 @@ run('parameters/aerosonde_parameters')  % load MAV: aircraft parameters
 addpath('model_viewer'); mav_view = spacecraft_viewer();  
 addpath('data_viewer'); data_view = data_viewer();
 
-% initialize the video writer
-VIDEO = 0;  % 1 means write video, 0 means don't write video
-if VIDEO==1, video=video_writer('chap4_video.avi', SIM.ts_video); end
-
 %initialize the dryden parameters by passing msg_state Va
 
 % initialize elements of the architecture
@@ -26,7 +22,7 @@ dryd = dryden(mav.true_state.Va);
 %addpath('models'); 
 wind = wind_simulation(SIM.ts_simulation,dryd);
 %define steady wind vector in the body frame (m/s)
-steady_wind = [-5; 5; 0.5];
+steady_wind = [0; 0; 0];
 % initialize the simulation time
 sim_time = SIM.start_time;
 
@@ -34,23 +30,23 @@ sim_time = SIM.start_time;
 disp('Type CTRL-C to exit');
 while sim_time < SIM.end_time
     %-------set control surfaces-------------
-     delta_e = 6.3*pi/180;
-    delta_t = 1;
+    delta_e = -6.3*pi/180;
+    delta_t = 0.5;
     %delta_a = 0;  
     delta_r = 0*pi/180 ;
     % delta = [delta_a; delta_e; delta_t; delta_r];
     if(sim_time > SIM.end_time/2)
-        delta_e = 6.3*pi/180;
+        delta_e = -6.3*pi/180;
     else
-        delta_e = 6.3*pi/180;
+        delta_e = -6.3*pi/180;
     end
     if(sim_time > SIM.end_time/2)
-        delta_a = -25*pi/180;
+        delta_a = -1.25*pi/180;
     else
-        delta_a = 25*pi/180;
+        delta_a = -1.25*pi/180;
     end
     if(sim_time > SIM.end_time/2)
-        delta_a = -25*pi/180.;end
+        delta_a = -1.25*pi/180.;end
     delta = [delta_a; delta_e; delta_t; delta_r];
 
 
@@ -67,7 +63,6 @@ while sim_time < SIM.end_time
                      mav.true_state,... % estimated states
                      mav.true_state,... % commmanded states
                      SIM.ts_simulation); 
-    if VIDEO, video.update(sim_time);  end
     pause(0.01);
     %-------increment time-------------
     sim_time = sim_time + SIM.ts_simulation;

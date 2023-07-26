@@ -196,7 +196,7 @@ classdef mav_dynamics < handle
                                       MAV.C_ell_r * MAV.b * r/(2 * Va));...
                                       MAV.c * (MAV.C_m_0 + MAV.C_m_alpha * alpha + MAV.C_m_q * MAV.c * q/(2 * Va));...
                                       MAV.b * (MAV.C_n_0 + MAV.C_n_beta * beta + MAV.C_n_p * MAV.b * p/(2 * Va)+...
-                                      MAV.C_n_r * MAV.b * r/(2 * Va))];
+                                      MAV.C_n_r * MAV.b * r/(2 * Va))]
             end
             %------------------------------------------------------------------------------------------------------------------
 
@@ -217,31 +217,31 @@ classdef mav_dynamics < handle
             
             % propulsion model needs tweaking
             %------------------------------------------------------------------------------------------------------------------
-            % V_in         = MAV.V_max * delta(3);
-            % omega_a      = MAV.rho * (MAV.D_prop^5)*MAV.C_Q0/(2*pi)^2;
-            % omega_a      = 1;
-            % omega_b      = MAV.rho * (MAV.D_prop^4) * MAV.C_Q1 * Va/(2 * pi) + MAV.KQ * MAV.K_V / MAV.R_motor;
-            % omega_c      = MAV.rho * (MAV.D_prop^3) * MAV.C_Q2 * (Va)^2 - MAV.KQ*V_in / MAV.R_motor + MAV.KQ * MAV.i0;
-            % omega_prop   = (-omega_b + sqrt(omega_b^2 - 4 * omega_a * omega_c)) / 2 * omega_a;
-            % 
-            % thrust_force = (MAV.rho *(MAV.D_prop^4) * (MAV.C_T0)* omega_prop^2)/(4 * pi * pi)+...
-            %                (MAV.rho * (MAV.D_prop^3) * MAV.C_T1 * Va * omega_prop)/(2 * pi)+...
-            %                MAV.rho * MAV.D_prop * MAV.C_T2 * Va^2;
-            % 
-            % motor_torque = (MAV.rho * (MAV.D_prop^5) * (MAV.C_Q0) * omega_prop^2)/(4 *pi *pi)+...
-            %                (MAV.rho * (MAV.D_prop^4) * MAV.C_Q1 * Va * omega_prop)/(2 * pi)+...
-            %                MAV.rho * MAV.D_prop * MAV.C_Q2 * Va^2;
+            V_in         = MAV.V_max * delta(3);
+            omega_a      = MAV.rho * (MAV.D_prop^5) * MAV.C_Q0/(2*pi)^2;
+            omega_a      = 1;
+            omega_b      = MAV.rho * (MAV.D_prop^4) * MAV.C_Q1 * Va/(2 * pi) + MAV.KQ * MAV.K_V / MAV.R_motor;
+            omega_c      = MAV.rho * (MAV.D_prop^3) * MAV.C_Q2 * (Va)^2 - (MAV.KQ * V_in / MAV.R_motor) + MAV.KQ * MAV.i0;
+            omega_prop   = (-omega_b + sqrt(omega_b^2 - 4 * omega_a *  omega_c)) / (2 * omega_a);
+
+            thrust_force = (MAV.rho *(MAV.D_prop^4) * (MAV.C_T0)* omega_prop^2)/(4 * pi * pi)+...
+                           (MAV.rho * (MAV.D_prop^3) * MAV.C_T1 * Va * omega_prop)/(2 * pi)+...
+                           MAV.rho * (MAV.D_prop^2) * MAV.C_T2 * Va^2;
+
+            motor_torque = (MAV.rho * (MAV.D_prop^5) * (MAV.C_Q0) * omega_prop^2)/(4 *pi *pi)+...
+                            (MAV.rho * (MAV.D_prop^4) * MAV.C_Q1 * Va * omega_prop)/(2 * pi)+...
+                            MAV.rho * (MAV.D_prop^3) * MAV.C_Q2 * Va^2
             %------------------------------------------------------------------------------------------------------------------
             
             
             
-            % propulsion model
-            %------------------------------------------------------------------------------------------------------------------
-            thrust_force   = 0.5 * MAV.rho * MAV.S_prop * MAV.C_prop * ((MAV.k_motor * delta(3))^2- Va^2);
-            motor_torque   = -MAV.k_T_P * (MAV.k_Omega * delta(3))^2;
-            %------------------------------------------------------------------------------------------------------------------
+            % propulsion 
+            % %------------------------------------------------------------------------------------------------------------------
+            % thrust_force   = 0.5 * MAV.rho * MAV.S_prop * MAV.C_prop * ((MAV.k_motor * delta(3))^2- Va^2);
+            % motor_torque   = -MAV.k_T_P * (MAV.k_Omega * delta(3))^2;
+            % %------------------------------------------------------------------------------------------------------------------
             
-            
+            %motor_torque = 0;
             
             % total force in body frame
             Force = gravity_force + [thrust_force; 0; 0] + aerodynamic_force + control_force;

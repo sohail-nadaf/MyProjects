@@ -9,6 +9,11 @@ The aim of this project is to simulate the dynamics of the aircraft and implemen
 
 # Matlab Files
 <details>
+<summary>Main Loop</summary>
+
+- mavsim.m
+</details>
+<details>
 <summary>Model files</summary>
 	
 - mav_dynamics.m
